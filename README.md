@@ -11,7 +11,7 @@ Create a minimum viable web solution that can achieve the followings (Note: star
 
 Pre-dev plans to achieve each of the above mentioned goals:
 1. Use a typescript-friendly iframe library to load URL
-2. On mouth click, create a circle object that has a relative position to the selected element
+2. On mouse click, create a circle object that has a relative position to the selected element
 3. When a circle indicator is created, we create a "note" object with the following type:
   "{
     URL: string,
