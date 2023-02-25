@@ -14,6 +14,7 @@ Pre-dev plans to achieve each of the above mentioned goals:
 2. On mouth click, create a circle object that has a relative position to the selected element
 3. When a circle indicator is created, we create a "note" object with the following type:
   "{
+    URL: string,
     attachedNode: string, // DOM tree path of the selected element, eg. something like "html/body/p[2]" points to the third P tag in body.
     message: string,
   }"
