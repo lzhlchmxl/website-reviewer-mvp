@@ -10,14 +10,28 @@ Create a minimum viable web solution that can achieve the followings (Note: star
 # Plans
 
 Pre-dev plans to achieve each of the above mentioned goals:
-1. Use a typescript-friendly iframe library to load URL
-2. On mouth click, create a circle object that has a relative position to the selected element
+1. ~~Use a typescript-friendly iframe library to load URL~~
+__2.26 Update: cross origin limitations make this approach impossible. Going with a screenshot-coordinate based approach with third party snapshot API.__
+
+2. On mouse click, create a circle object that has a relative position to the selected element
 3. When a circle indicator is created, we create a "note" object with the following type:
-  "{
-    URL: string,
-    attachedNode: string, // DOM tree path of the selected element, eg. something like "html/body/p[2]" points to the third P tag in body.
-    message: string,
-  }"
+```
+{
+  URL: string,
+  attachedNode: string, // DOM tree path of the selected element, eg. something like "html/body/p[2]" points to the third P tag in body.
+  message: string,
+}
+```
+__2.26 Update: note type for coordinates based approach:__
+```
+{
+  id: string,
+  x: number,
+  y: number,
+  message: string,
+}
+```
+ 
 4. Not decided yet. Write to file, database, or send as an email could all work.
 5. Not decided yet, need more research on Iframe-parent communications.
 
