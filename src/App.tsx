@@ -1,15 +1,28 @@
-import { useState } from 'react';
-import Iframe from 'react-iframe';
+import { useEffect, useState } from 'react';
+import IframePlayer from './IframePlayer';
 
 function App() {
 
-  const [reviewLink, setReviewLink] = useState('https://www.google.com/');
+  const [reviewLink, setReviewLink] = useState('https://tailwindcss.com/docs/installation');
 
 
   const handleInputChange = (value: string) => {
     setReviewLink(value);
   }
 
+  useEffect(() => {
+    window.addEventListener('message', handleMessage);
+    return () => {
+      window.removeEventListener('message', handleMessage)
+    };
+  })
+
+  const handleMessage = (e: MessageEvent<{ type: string, message: string}>) => {
+    if (e.data.type === 'elementClick') {
+      
+      console.log(`Clicked element: ${e.data.message}`);
+    }
+  }
 
   return (
     <div className="h-full flex flex-col">
@@ -24,14 +37,7 @@ function App() {
         />
         <p># Hold left-ctrl and click anywhere to create a note.</p>
       </div>
-
-      <Iframe 
-        url={reviewLink}
-        id=""
-        className="w-full grow"
-        // display="block"
-        // position="relative"
-      />
+      <IframePlayer reviewLink={reviewLink} />
     </div>
   );
 }
