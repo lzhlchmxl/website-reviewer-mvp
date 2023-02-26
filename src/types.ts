@@ -3,4 +3,5 @@ export type snapshotParams = {
   websiteURL: string,
   viewportWidth?: number,
   viewportHeight?: number,
+  imageWidth?: number,
 }

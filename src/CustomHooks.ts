@@ -43,7 +43,8 @@ export function useAsync<T> (
       canceled = true;
       setState({ status: "pending"});
     }
-  }, dependencies)
+    
+  }, dependencies) // eslint-disable-line
 
   return state;
 }

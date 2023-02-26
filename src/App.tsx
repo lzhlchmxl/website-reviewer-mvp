@@ -1,12 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { captureSnapshot } from './Api';
+// import { useAsync } from './CustomHooks';
+import ErrorIndicator from './ErrorIndicator';
+import LoadingIndicator from './LoadingIndicator';
 
 function App() {
 
-  const [accessKey, setAccessKey] = useState('77aa642b578d63b8c6216ecc37937949')
+  const [accessKey, setAccessKey] = useState('a02aeaf299f062eb982f088fad8d5397')
   const [websiteURL, setWebsiteURL] = useState('https://tailwindcss.com/docs/installation');
   const [viewportWidth, setViewportWidth] = useState(1440);
   const [viewportHeight, setViewportHeight] = useState(900);
+  // const [imageWidth, setImageWidth] = useState(1440);
   const [imageURL, setImageURL] = useState('');
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const handleURLChange = (value: string) => {
     setWebsiteURL(value);
@@ -24,8 +32,31 @@ function App() {
     setViewportHeight(value);
   }
 
-  const handleCaptureClick = () => {
-    // 
+  // const handleImageWidthChange = (value: number) => {
+  //   setImageWidth(value);
+  // }
+
+  const handleCaptureClick = async () => {
+    setIsLoading(true);
+    setHasError(false);
+
+    const params = {
+      accessKey,
+      websiteURL,
+      viewportWidth,
+      viewportHeight
+    }
+
+    try {
+      const imageURL = await captureSnapshot(params);  
+      console.log(imageURL)
+      setImageURL(imageURL);
+    } catch(e) {
+      console.error(e);
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -67,6 +98,14 @@ function App() {
             className='bg-gray-200 border border-gray-500 w-1/2 ml-3 max-w-[120px]' 
             onChange={ e => handleViewportHeightChange(+e.currentTarget.value)}
           />
+          {/* <label htmlFor='image-width'>Image width:</label>
+          <input
+            type='number'
+            name='image-width' 
+            id='image-width' 
+            className='bg-gray-200 border border-gray-500 w-1/2 ml-3 max-w-[120px]' 
+            onChange={ e => handleImageWidthChange(+e.currentTarget.value)}
+          /> */}
         </div>
         <button 
           className='border border-gray-900 rounded-md p-1 px-3 shadow-md hover:bg-black hover:text-white transition-all'
@@ -77,13 +116,17 @@ function App() {
         <p># Hold left-ctrl and click anywhere to create a note.</p>
       </div>
       {
-        imageURL !== ""
-        &&
+        imageURL === ""
+        ?
+        <p>Render a snapshot of your target website by pressing the "Capture Snapshot" button</p>
+        :
         <img 
           src={imageURL}
           alt='screenshot of the entered website'
         />
       }
+      { isLoading && <LoadingIndicator /> }
+      { hasError && <ErrorIndicator /> }
       
     </div>
   );
