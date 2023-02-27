@@ -3,6 +3,7 @@ import Path from 'node:path';
 import * as T from './types';
 import fetch from 'node-fetch';
 import md5 from 'md5';
+import fs from 'fs';
 
 const app = Express();
 
@@ -11,6 +12,7 @@ const host = process.env.HOST ||  "127.0.0.1";
 
 // Serve static files from the latest production React app build
 app.use(Express.static(Path.join('..', 'website-reviewer-client', 'build')));
+app.use(Express.static(Path.join(__dirname, 'public')));
 
 // Parse JSON requests automatically
 app.use(Express.json());
@@ -22,11 +24,14 @@ app.post('/api/capture-snapshot', async (req, res) => {
 
   const response = await fetch(`http://api.screenshotlayer.com/api/capture?access_key=${accessKey}&url=${websiteURL}&viewport=${viewportWidth}x${viewportHeight}&fullpage=1&secret_key=${secret_key}`);
  
+  const buffer = await response.buffer();
+  const imageName = `screenshot-${Date.now()}.png`; // generate a unique image name
+  const imagePath = Path.resolve(__dirname, 'public', imageName);
+  fs.writeFileSync(imagePath, buffer); // save the image to the server
 
-  const imageBlob = await response.blob();
-  const imageDataUrl = URL.createObjectURL(imageBlob);
+  const imageURL = `http://${host}:${port}/${imageName}`; // set the image URL
 
-  res.send(imageDataUrl);
+  res.send(imageURL);
 
 })
 

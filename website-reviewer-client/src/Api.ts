@@ -14,9 +14,9 @@ export async function captureSnapshot(params: T.snapshotParams): Promise<string>
     throw new Error("/api/capture-snapshot returned HTTP status code: " + response.status);
   }
 
-  const imageURL: string = await response.json();
+  console.log(response);
 
-  return imageURL;
+  return response.text();
 }
 
 // curl -X POST -H 'Content-Type: application/json' -d '{}' http://localhost:4000/api/capture-snapshot

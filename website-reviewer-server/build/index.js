@@ -16,22 +16,25 @@ const express_1 = __importDefault(require("express"));
 const node_path_1 = __importDefault(require("node:path"));
 const node_fetch_1 = __importDefault(require("node-fetch"));
 const md5_1 = __importDefault(require("md5"));
+const fs_1 = __importDefault(require("fs"));
 const app = (0, express_1.default)();
 const port = process.env.PORT ? parseInt(process.env.PORT) : 4000;
 const host = process.env.HOST || "127.0.0.1";
 // Serve static files from the latest production React app build
 app.use(express_1.default.static(node_path_1.default.join('..', 'website-reviewer-client', 'build')));
+app.use(express_1.default.static(node_path_1.default.join(__dirname, 'public')));
 // Parse JSON requests automatically
 app.use(express_1.default.json());
 app.post('/api/capture-snapshot', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { accessKey, websiteURL, viewportWidth, viewportHeight } = req.body;
     const secret_key = (0, md5_1.default)(`${websiteURL}8hA6#bbdM|T$VdvwWp]#Fl5SkR.kN`);
     const response = yield (0, node_fetch_1.default)(`http://api.screenshotlayer.com/api/capture?access_key=${accessKey}&url=${websiteURL}&viewport=${viewportWidth}x${viewportHeight}&fullpage=1&secret_key=${secret_key}`);
-    console.log(response.headers);
-    console.log(response.body);
-    const imageBlob = yield response.blob();
-    const imageDataUrl = URL.createObjectURL(imageBlob);
-    res.send(imageDataUrl);
+    const buffer = yield response.buffer();
+    const imageName = `screenshot-${Date.now()}.png`; // generate a unique image name
+    const imagePath = node_path_1.default.resolve(__dirname, 'public', imageName);
+    fs_1.default.writeFileSync(imagePath, buffer); // save the image to the server
+    const imageURL = `http://${host}:${port}/${imageName}`; // set the image URL
+    res.send(imageURL);
 }));
 // Serve index.html to all other routes
 app.get('/*', (_req, res) => {
