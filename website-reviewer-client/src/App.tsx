@@ -114,7 +114,7 @@ function App() {
         >
           Capture Snapshot
         </button>
-        <p>Left click anywhere to create a note.</p>
+        <p># Left ctrl + click anywhere to create a note.</p>
       </div>
       {
         imageURL === ""
