@@ -14,8 +14,6 @@ export async function captureSnapshot(params: T.snapshotParams): Promise<string>
     throw new Error("/api/capture-snapshot returned HTTP status code: " + response.status);
   }
 
-  console.log(response);
-
   return response.text();
 }
 

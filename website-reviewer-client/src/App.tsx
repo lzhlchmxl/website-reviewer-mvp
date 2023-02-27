@@ -3,6 +3,7 @@ import { captureSnapshot } from './Api';
 // import { useAsync } from './CustomHooks';
 import ErrorIndicator from './ErrorIndicator';
 import LoadingIndicator from './LoadingIndicator';
+import SnapshotMask from './SnapshotMask';
 
 function App() {
 
@@ -113,17 +114,20 @@ function App() {
         >
           Capture Snapshot
         </button>
-        <p># Hold left-ctrl and click anywhere to create a note.</p>
+        <p>Left click anywhere to create a note.</p>
       </div>
       {
         imageURL === ""
         ?
         <p>Render a snapshot of your target website by pressing the "Capture Snapshot" button</p>
         :
-        <img 
-          src={imageURL}
-          alt='screenshot of the entered website'
-        />
+        <div className='flex relative max-w-fit'>
+          <img 
+            src={imageURL}
+            alt='screenshot of the entered website'
+          />
+          <SnapshotMask />
+        </div>
       }
       { isLoading && <LoadingIndicator /> }
       { hasError && <ErrorIndicator /> }

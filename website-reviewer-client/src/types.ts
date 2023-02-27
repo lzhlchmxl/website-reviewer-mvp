@@ -5,3 +5,11 @@ export type snapshotParams = {
   viewportHeight?: number,
   imageWidth?: number,
 }
+
+export type note = {
+  id: string,
+  text: string,
+  isActive: boolean,
+  x: number,
+  y: number,
+}
