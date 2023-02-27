@@ -2,7 +2,7 @@
 
 Create a minimum viable web solution that can achieve the followings (Note: starred items have lower priorities):
 1. Load any website based on a given URL
-2. Give user visual indicators to selected elements
+2. Give user visual indicators to ~~selected elements~~ clicked coordinates
 3. Let user to visually create, edit*, remove* notes
 4. A way to store the review info
 5. Load review info in a visual manner
