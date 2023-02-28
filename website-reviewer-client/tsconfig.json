@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "../website-reviewer-server/database.ts"  ]
 }

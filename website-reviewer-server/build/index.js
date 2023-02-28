@@ -17,6 +17,8 @@ const node_path_1 = __importDefault(require("node:path"));
 const node_fetch_1 = __importDefault(require("node-fetch"));
 const md5_1 = __importDefault(require("md5"));
 const fs_1 = __importDefault(require("fs"));
+const database_1 = require("./database");
+const generateUniqueId = require('generate-unique-id');
 const app = (0, express_1.default)();
 const port = process.env.PORT ? parseInt(process.env.PORT) : 4000;
 const host = process.env.HOST || "127.0.0.1";
@@ -26,15 +28,31 @@ app.use(express_1.default.static(node_path_1.default.join(__dirname, 'public')))
 // Parse JSON requests automatically
 app.use(express_1.default.json());
 app.post('/api/capture-snapshot', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { accessKey, websiteURL, viewportWidth, viewportHeight } = req.body;
-    const secret_key = (0, md5_1.default)(`${websiteURL}8hA6#bbdM|T$VdvwWp]#Fl5SkR.kN`);
-    const response = yield (0, node_fetch_1.default)(`http://api.screenshotlayer.com/api/capture?access_key=${accessKey}&url=${websiteURL}&viewport=${viewportWidth}x${viewportHeight}&fullpage=1&secret_key=${secret_key}`);
+    const { websiteUrl, viewportWidth, viewportHeight } = req.body;
+    const access_key = 'a02aeaf299f062eb982f088fad8d5397';
+    const secret_key = (0, md5_1.default)(`${websiteUrl}8hA6#bbdM|T$VdvwWp]#Fl5SkR.kN`);
+    const response = yield (0, node_fetch_1.default)(`http://api.screenshotlayer.com/api/capture?access_key=${access_key}&url=${websiteUrl}&viewport=${viewportWidth}x${viewportHeight}&fullpage=1&secret_key=${secret_key}`);
+    console.log(response);
     const buffer = yield response.buffer();
     const imageName = `screenshot-${Date.now()}.png`; // generate a unique image name
     const imagePath = node_path_1.default.resolve(__dirname, 'public', imageName);
     fs_1.default.writeFileSync(imagePath, buffer); // save the image to the server
     const imageURL = `http://${host}:${port}/${imageName}`; // set the image URL
     res.send(imageURL);
+}));
+app.post('/api/review/create', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const database = yield (0, database_1.readDatabase)();
+    const { name, notes, imageUrl } = req.body;
+    const id = generateUniqueId();
+    const newReview = {
+        id,
+        name,
+        notes,
+        imageUrl
+    };
+    database.push(newReview);
+    yield (0, database_1.writeDatabase)(database);
+    res.send(id);
 }));
 // Serve index.html to all other routes
 app.get('/*', (_req, res) => {

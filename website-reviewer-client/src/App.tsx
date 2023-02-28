@@ -1,57 +1,67 @@
 import { useState } from 'react';
-import { captureSnapshot } from './Api';
-// import { useAsync } from './CustomHooks';
+import { captureSnapshot, saveReview } from './Api';
+import Button from './Button';
 import ErrorIndicator from './ErrorIndicator';
+import InputWithLabel from './InputWithLabel';
 import LoadingIndicator from './LoadingIndicator';
+import SelectWithLabel from './SelectWithLabel';
 import SnapshotMask from './SnapshotMask';
+import * as T from './types';
 
 function App() {
 
-  const [accessKey, setAccessKey] = useState('a02aeaf299f062eb982f088fad8d5397')
-  const [websiteURL, setWebsiteURL] = useState('https://tailwindcss.com/docs/installation');
+  // snapshot parameters
+  const [websiteUrl, setWebsiteUrl] = useState('https://tailwindcss.com/docs/installation');
   const [viewportWidth, setViewportWidth] = useState(1440);
   const [viewportHeight, setViewportHeight] = useState(900);
-  // const [imageWidth, setImageWidth] = useState(1440);
-  const [imageURL, setImageURL] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+
+  // review parameters
+  const [reviewName, setReviewName] = useState('');
+  const [notes, setNotes] = useState<T.note[]>([]);
+
+
+  // const [currentReviewId, setCurrentReviewId] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
-
-  const handleURLChange = (value: string) => {
-    setWebsiteURL(value);
-  }
-
-  const handleKeyChange = (value: string) => {
-    setAccessKey(value);
-  }
-
-  const handleViewportWidthChange = (value: number) => {
-    setViewportWidth(value);
-  }
-
-  const handleViewportHeightChange = (value: number) => {
-    setViewportHeight(value);
-  }
-
-  // const handleImageWidthChange = (value: number) => {
-  //   setImageWidth(value);
-  // }
+  
 
   const handleCaptureClick = async () => {
     setIsLoading(true);
     setHasError(false);
 
     const params = {
-      accessKey,
-      websiteURL,
+      websiteUrl,
       viewportWidth,
       viewportHeight
     }
 
     try {
       const imageURL = await captureSnapshot(params);  
-      console.log(imageURL)
-      setImageURL(imageURL);
+      setImageUrl(imageURL);
+    } catch(e) {
+      console.error(e);
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const handleTrySaveReview = async () => {
+    setIsLoading(true);
+    setHasError(false);
+
+    // [TODO] validation
+
+    const params = {
+      name: reviewName,
+      imageUrl,
+      notes,
+    }
+
+    try {
+      const newReviewId = await saveReview(params);  
     } catch(e) {
       console.error(e);
       setHasError(true);
@@ -62,71 +72,81 @@ function App() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className='p-5'>
-        <div className='pb-5'>
-          <label htmlFor='website-url'>Enter the URL:</label>
-          <input
-            placeholder='eg. https://www.google.com/'
-            name='website-url' 
-            id='website-url' 
-            className='bg-gray-200 border border-gray-500 w-1/2 ml-3' 
-            onChange={ e => handleURLChange(e.currentTarget.value) }
+      <div className='flex'>
+        <div className='p-5 max-w-[45%]'>
+          <div className='flex flex-col pb-3'>
+            <label htmlFor='website-url'>Enter the URL:</label>
+            <input
+              placeholder='eg. https://www.google.com/'
+              name='website-url' 
+              id='website-url' 
+              className='bg-white border border-gray-500' 
+              onChange={ e => setWebsiteUrl(e.currentTarget.value) }
+            />
+          </div>
+          <div className='flex justify-between X'>
+            <div className='flex flex-col max-w-[45%]'>
+              <label htmlFor='viewport-width'>Viewport width:</label>
+              <input
+                type='number'
+                name='viewport-width' 
+                id='viewport-width' 
+                className='bg-white border border-gray-500' 
+                onChange={ e => setViewportWidth(+e.currentTarget.value)}
+              />
+            </div>
+            <div className='flex flex-col max-w-[45%]'>
+              <label htmlFor='viewport-width'>Viewport height:</label>
+              <input
+                type='number'
+                name='viewport-height' 
+                id='viewport-height' 
+                className='bg-white border border-gray-500' 
+                onChange={ e => setViewportHeight(+e.currentTarget.value)}
+              />
+            </div>
+          </div>
+          <Button 
+            actionType='primary'
+            actionText='Capture Snapshot'
+            actionHandler={ handleCaptureClick }
           />
+          <p># Left ctrl + click anywhere to create a note.</p>
         </div>
-        <div className='pb-5'>
-          <label htmlFor='access-key'>Enter access key:</label>
-          <input
-            name='access-key' 
-            id='access-key' 
-            className='bg-gray-200 border border-gray-500 w-1/2 ml-3' 
-            onChange={ e => handleKeyChange(e.currentTarget.value) }
-          />
-        </div>
-        <div className='flex pb-5'>
-          <label htmlFor='viewport-width'>Viewport width:</label>
-          <input
-            type='number'
-            name='viewport-width' 
-            id='viewport-width' 
-            className='bg-gray-200 border border-gray-500 w-1/2 ml-3 max-w-[120px] mr-5' 
-            onChange={ e => handleViewportWidthChange(+e.currentTarget.value)}
-          />
-          <label htmlFor='viewport-width'>Viewport height:</label>
-          <input
-            type='number'
-            name='viewport-height' 
-            id='viewport-height' 
-            className='bg-gray-200 border border-gray-500 w-1/2 ml-3 max-w-[120px]' 
-            onChange={ e => handleViewportHeightChange(+e.currentTarget.value)}
-          />
-          {/* <label htmlFor='image-width'>Image width:</label>
-          <input
-            type='number'
-            name='image-width' 
-            id='image-width' 
-            className='bg-gray-200 border border-gray-500 w-1/2 ml-3 max-w-[120px]' 
-            onChange={ e => handleImageWidthChange(+e.currentTarget.value)}
+        <div className='p-5 max-w-[45%]'>
+          {/* <SelectWithLabel 
+            label='Select a Review File'
+            name='review-select'
+            value={}
           /> */}
+          <InputWithLabel 
+            label='Review Name'
+            name='review-name'
+            placeholder='eg. new project'
+            value={reviewName}
+            setValue={ setReviewName }
+          />
+          <Button 
+            actionType='primary'
+            actionText='Save Review'
+            actionHandler={ handleTrySaveReview }
+          />
         </div>
-        <button 
-          className='border border-gray-900 rounded-md p-1 px-3 shadow-md hover:bg-black hover:text-white transition-all'
-          onClick={ handleCaptureClick }
-        >
-          Capture Snapshot
-        </button>
-        <p># Left ctrl + click anywhere to create a note.</p>
       </div>
       {
-        imageURL === ""
+        imageUrl === ""
         ?
         <p>Render a snapshot of your target website by pressing the "Capture Snapshot" button</p>
         :
         <div className='flex relative max-w-fit'>
           <img 
-            src={imageURL}
+            src={imageUrl}
             alt='screenshot of the entered website'
           />
-          <SnapshotMask />
+          <SnapshotMask 
+            notes={notes}
+            setNotes={setNotes}
+          />
         </div>
       }
       { isLoading && <LoadingIndicator /> }

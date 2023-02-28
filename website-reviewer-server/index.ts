@@ -4,6 +4,8 @@ import * as T from './types';
 import fetch from 'node-fetch';
 import md5 from 'md5';
 import fs from 'fs';
+import { readDatabase, writeDatabase } from './database';
+const generateUniqueId = require('generate-unique-id');
 
 const app = Express();
 
@@ -19,11 +21,13 @@ app.use(Express.json());
 
 app.post('/api/capture-snapshot', async (req, res) => {
 
-  const { accessKey, websiteURL, viewportWidth, viewportHeight }: T.snapshotParams = req.body;
-  const secret_key = md5(`${websiteURL}8hA6#bbdM|T$VdvwWp]#Fl5SkR.kN`);
+  const { websiteUrl, viewportWidth, viewportHeight }: T.snapshotParams = req.body;
 
-  const response = await fetch(`http://api.screenshotlayer.com/api/capture?access_key=${accessKey}&url=${websiteURL}&viewport=${viewportWidth}x${viewportHeight}&fullpage=1&secret_key=${secret_key}`);
- 
+  const access_key = 'a02aeaf299f062eb982f088fad8d5397';
+  const secret_key = md5(`${websiteUrl}8hA6#bbdM|T$VdvwWp]#Fl5SkR.kN`);
+
+  const response = await fetch(`http://api.screenshotlayer.com/api/capture?access_key=${access_key}&url=${websiteUrl}&viewport=${viewportWidth}x${viewportHeight}&fullpage=1&secret_key=${secret_key}`);
+
   const buffer = await response.buffer();
   const imageName = `screenshot-${Date.now()}.png`; // generate a unique image name
   const imagePath = Path.resolve(__dirname, 'public', imageName);
@@ -33,6 +37,23 @@ app.post('/api/capture-snapshot', async (req, res) => {
 
   res.send(imageURL);
 
+});
+
+app.post('/api/review/create', async (req, res) => {
+  const database = await readDatabase();
+  const {name, notes, imageUrl}: T.newReview = req.body;
+  const id = generateUniqueId();
+  const newReview = {
+    id,
+    name,
+    notes,
+    imageUrl
+  }
+  database.push(newReview);
+
+  await writeDatabase(database);
+
+  res.send(id);
 })
 
 

@@ -17,4 +17,21 @@ export async function captureSnapshot(params: T.snapshotParams): Promise<string>
   return response.text();
 }
 
+export async function saveReview(params: T.newReview): Promise<T.id> {
+  
+  const requestOptions = {
+    method: 'post',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(params),
+  }
+  
+  const response = await fetch('/api/review/create', requestOptions);
+
+  if (response.status !== 200) {
+    throw new Error("/api/capture-snapshot returned HTTP status code: " + response.status);
+  }
+
+  return response.text();
+}
+
 // curl -X POST -H 'Content-Type: application/json' -d '{}' http://localhost:4000/api/capture-snapshot

@@ -1,6 +1,5 @@
 export type snapshotParams = {
-  accessKey: string,
-  websiteURL: string,
+  websiteUrl: string,
   viewportWidth?: number,
   viewportHeight?: number,
   imageWidth?: number,
@@ -20,4 +19,16 @@ export type note = {
   isActive: boolean,
   x: number,
   y: number,
+}
+
+export type id = string
+
+export type newReview = {
+  imageUrl: string,
+  notes: note[],
+  name: string,
+}
+
+export type snapshotMaskRef = {
+  getNotesState: () => note[]
 }

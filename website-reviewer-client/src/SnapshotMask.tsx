@@ -1,12 +1,11 @@
-import { useState } from 'react';
 import * as T from './types';
 import uniqid from 'uniqid';
 import NotesIndicator from './NotesIndicator';
 import NoteEditor from './NoteEditor';
 
-export default function SnapshotMask() {
+export default function SnapshotMask({notes, setNotes}: {notes: T.note[], setNotes: (notes: T.note[]) => void}) {
 
-  const [notes, setNotes] = useState<T.note[]>([]);
+  
 
   const handleMaskClick = (e: any) => {
     
