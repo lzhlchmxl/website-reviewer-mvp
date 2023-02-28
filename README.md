@@ -33,7 +33,7 @@ __2.26 Update: note type for coordinates based approach:__
 }
 ```
  
-4. Not decided yet. Write to file, database, or send as an email could all work. __2.27 Update:__ using a JSON file as a minimum viable database on the server. Database structure:
+4. ~~Not decided yet. Write to file, database, or send as an email could all work.~~ __2.27 Update:__ using a JSON file as a minimum viable database on the server. Database structure:
 ```
 reviews: [
   {
