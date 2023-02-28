@@ -19,7 +19,7 @@ __2.26 Update: cross origin limitations make this approach impossible. Going wit
 {
   URL: string,
   attachedNode: string, // DOM tree path of the selected element, eg. something like "html/body/p[2]" points to the third P tag in body.
-  message: string,
+  text: string,
 }
 ```
 __2.26 Update: note type for coordinates based approach:__
@@ -28,11 +28,22 @@ __2.26 Update: note type for coordinates based approach:__
   id: string,
   x: number,
   y: number,
-  message: string,
+  isActive: boolean,
+  text: string,
 }
 ```
  
-4. Not decided yet. Write to file, database, or send as an email could all work.
+4. ~~Not decided yet. Write to file, database, or send as an email could all work.~~ __2.27 Update:__ using a JSON file as a minimum viable database on the server. Database structure:
+```
+reviews: [
+  {
+    id: string,
+    imgURL: string,
+    name*: string,
+    notes: T.note[],
+  },
+]
+```
 5. Not decided yet, need more research on Iframe-parent communications.
 
 # Getting Started with Create React App
