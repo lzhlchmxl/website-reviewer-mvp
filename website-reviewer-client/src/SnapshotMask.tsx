@@ -16,19 +16,19 @@ export default function SnapshotMask() {
       const x = e.clientX - mask.left;
       const y = e.clientY - mask.top;
 
-      const newNote:T.note = {
+      const newNote:T.newNote = {
         id: uniqid(),
-        text: '',
+        text: null,
         isActive: true,
         x,
         y,
       }
 
       setNotes([...notes, newNote]);
-  }
+    }
   }
 
-  const handleSetText = (text: string, id: string) => {
+  const handleTrySaveNote = (text: string, id: string) => {
 
     const note = notes.find( note => note.id === id);
 
@@ -42,7 +42,13 @@ export default function SnapshotMask() {
     }
 
     const notesClone = notes.filter( note => note.id !== id);
-    setNotes([...notesClone, newNote]);
+
+    if (text === "" || text === null) {
+      setNotes([...notesClone]);
+    } else {
+      // try save note to database
+      setNotes([...notesClone, newNote]);
+    }
   }
 
   const handleToggleActive = (id: string) => {
@@ -90,8 +96,8 @@ export default function SnapshotMask() {
           note.isActive 
           &&
           <NoteEditor 
-            text={note.text}
-            setText={ (text) => handleSetText(text, note.id) }
+            initialText={note.text}
+            trySaveNote={ (text) => handleTrySaveNote(text, note.id) }
             tryDeleteNote={ () => handleTryDeleteNote(note.id) }
           />
         }

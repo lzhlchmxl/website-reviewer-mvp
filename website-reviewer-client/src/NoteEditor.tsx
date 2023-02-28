@@ -1,26 +1,32 @@
+import { useState } from "react";
+
 export default function NoteEditor(
   {
-    text, 
-    setText,
+    initialText, 
+    trySaveNote,
     tryDeleteNote
   }
   : 
   {
-    text: string, 
-    setText: (text: string) => void,
+    initialText: string | null, 
+    trySaveNote: (text: string) => void,
     tryDeleteNote: () => void,
   }
 ) {
 
+  const [ text, setText] = useState(initialText ? initialText : "");
+
   return (
     <div className="flex justify-between relative w-[267px]">
       <textarea
+        autoFocus
         className={`
           absolute bg-white border border-gray-500 rounded-lg p-1
           w-[200px] min-h-[35px] rounded-tr-none rounded-br-none
         `}
         value={text}
         onChange={ e => setText(e.currentTarget.value)}
+        onBlur={ () => trySaveNote(text) }
       />
       <button
         className="
