@@ -10,14 +10,14 @@ export default function selectWithLabel(
   {
     label: string,
     name: string,
-    selections: [{value: string, text: string}]
+    selections: {value: string, text: string}[],
     selected: string,
     setSelected: (value: string) => void,
   }
 ) {
 
   const selectionsHTML = selections.map( (selection, index) => {
-    return <option selected={selection.value === selected} value={selection.value} key={index}>{selection.text}</option>;
+    return <option value={selection.value} key={index}>{selection.text}</option>;
   })
 
   return (
@@ -26,8 +26,10 @@ export default function selectWithLabel(
       <select
         name={name}
         id={name}
+        value={selected}     
         onChange={ e => setSelected(e.currentTarget.value) }
       >
+        <option value={'default'} disabled hidden>- select review -</option>
         { selectionsHTML }
       </select>
 

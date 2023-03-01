@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { captureSnapshot, saveReview } from './Api';
+import { captureSnapshot, getReviews, saveReview } from './Api';
 import Button from './Button';
+import { useAsync } from './CustomHooks';
 import ErrorIndicator from './ErrorIndicator';
 import InputWithLabel from './InputWithLabel';
 import LoadingIndicator from './LoadingIndicator';
@@ -19,13 +20,27 @@ function App() {
   // review parameters
   const [reviewName, setReviewName] = useState('');
   const [notes, setNotes] = useState<T.note[]>([]);
+  
 
-
-  // const [currentReviewId, setCurrentReviewId] = useState('');
-
+  const [currentReviewId, setCurrentReviewId] = useState<T.id >('default');
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   
+
+  const reviewHeadersAsync = useAsync(getReviews, []);
+
+  if ( reviewHeadersAsync.status === "pending") {
+    return <LoadingIndicator />
+  }
+
+  if (reviewHeadersAsync.status === "rejected") {
+    return <ErrorIndicator />
+  }
+
+  const reviewHeaders = reviewHeadersAsync.value;
+  const reviewSelections = reviewHeaders.map( reviewHeader => {
+    return {value: reviewHeader.id, text: reviewHeader.name} 
+  })
 
   const handleCaptureClick = async () => {
     setIsLoading(true);
@@ -68,6 +83,31 @@ function App() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  const handleTryGetReviewDetails = async (id: T.id) => {
+
+    setIsLoading(true);
+    setHasError(false);
+
+    // [TODO] validation
+
+    const params = {
+      name: reviewName,
+      imageUrl,
+      notes,
+    }
+
+    try {
+      const newReviewId = await saveReview(params);  
+    } catch(e) {
+      console.error(e);
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
+
+    setCurrentReviewId(id);
   }
 
   return (
@@ -114,11 +154,13 @@ function App() {
           <p># Left ctrl + click anywhere to create a note.</p>
         </div>
         <div className='p-5 max-w-[45%]'>
-          {/* <SelectWithLabel 
+          <SelectWithLabel 
             label='Select a Review File'
             name='review-select'
-            value={}
-          /> */}
+            selected={currentReviewId}
+            selections={reviewSelections}
+            setSelected={ handleTryGetReviewDetails }
+          />
           <InputWithLabel 
             label='Review Name'
             name='review-name'

@@ -29,6 +29,10 @@ export type newReview = {
   name: string,
 }
 
+export type review = {
+  id: id
+} & newReview;
+
 export type snapshotMaskRef = {
   getNotesState: () => note[]
 }

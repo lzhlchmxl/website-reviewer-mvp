@@ -4,7 +4,7 @@ export type snapshotParams = {
   viewportHeight: number,
 }
 
-export type Database = review[]
+export type Database = { reviews: review[] }
 export type review = {
   id: string,
 } & newReview;
@@ -13,6 +13,11 @@ export type newReview = {
   name: string,
   notes: note[],
   imageUrl: string,
+}
+
+export type reviewHeader = {
+  id: string,
+  name: string,
 }
 
 export type note = {

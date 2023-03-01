@@ -4,7 +4,7 @@ import * as T from './types';
 const databaseFilePath = process.env.DATABASE_FILE || 'database.json';
 
 function makeNewDatabase(): T.Database {
-  return []
+  return { reviews: [] } 
 }
 
 export async function readDatabase(): Promise<T.Database> {

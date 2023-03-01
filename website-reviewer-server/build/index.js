@@ -27,12 +27,18 @@ app.use(express_1.default.static(node_path_1.default.join('..', 'website-reviewe
 app.use(express_1.default.static(node_path_1.default.join(__dirname, 'public')));
 // Parse JSON requests automatically
 app.use(express_1.default.json());
+app.get('/api/review-list', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const database = yield (0, database_1.readDatabase)();
+    const reviewHeaders = database.reviews.map(review => {
+        return { id: review.id, name: review.name };
+    });
+    res.send(reviewHeaders);
+}));
 app.post('/api/capture-snapshot', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { websiteUrl, viewportWidth, viewportHeight } = req.body;
     const access_key = 'a02aeaf299f062eb982f088fad8d5397';
     const secret_key = (0, md5_1.default)(`${websiteUrl}8hA6#bbdM|T$VdvwWp]#Fl5SkR.kN`);
     const response = yield (0, node_fetch_1.default)(`http://api.screenshotlayer.com/api/capture?access_key=${access_key}&url=${websiteUrl}&viewport=${viewportWidth}x${viewportHeight}&fullpage=1&secret_key=${secret_key}`);
-    console.log(response);
     const buffer = yield response.buffer();
     const imageName = `screenshot-${Date.now()}.png`; // generate a unique image name
     const imagePath = node_path_1.default.resolve(__dirname, 'public', imageName);
@@ -50,7 +56,7 @@ app.post('/api/review/create', (req, res) => __awaiter(void 0, void 0, void 0, f
         notes,
         imageUrl
     };
-    database.push(newReview);
+    database.reviews.push(newReview);
     yield (0, database_1.writeDatabase)(database);
     res.send(id);
 }));

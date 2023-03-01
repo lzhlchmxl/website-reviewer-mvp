@@ -19,6 +19,18 @@ app.use(Express.static(Path.join(__dirname, 'public')));
 // Parse JSON requests automatically
 app.use(Express.json());
 
+app.get('/api/review-list', async (_req, res) => {
+
+  const database = await readDatabase();
+
+  const reviewHeaders: T.reviewHeader[] = database.reviews.map( review => {
+    return { id: review.id, name: review.name }
+  })
+
+  res.send(reviewHeaders);
+})
+
+
 app.post('/api/capture-snapshot', async (req, res) => {
 
   const { websiteUrl, viewportWidth, viewportHeight }: T.snapshotParams = req.body;
@@ -49,7 +61,7 @@ app.post('/api/review/create', async (req, res) => {
     notes,
     imageUrl
   }
-  database.push(newReview);
+  database.reviews.push(newReview);
 
   await writeDatabase(database);
 

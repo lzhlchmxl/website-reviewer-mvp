@@ -1,5 +1,18 @@
 import * as T from './types';
 
+export async function getReviews(): Promise<T.review[]> {
+  const response = await fetch('/api/review-list');
+  
+  if (response.status !== 200) {
+    throw new Error("/api/review-list returned HTTP status code: " + response.status);
+  }
+
+  const reviewHeaders: T.review[] = await response.json();
+
+  return reviewHeaders;
+
+}
+
 export async function captureSnapshot(params: T.snapshotParams): Promise<string> {
 
   const requestOptions = {
