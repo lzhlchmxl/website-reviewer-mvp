@@ -30,7 +30,7 @@ export async function captureSnapshot(params: T.snapshotParams): Promise<string>
   return response.text();
 }
 
-export async function saveReview(params: T.newReview): Promise<T.id> {
+export async function createReview(params: T.newReview): Promise<T.id> {
   
   const requestOptions = {
     method: 'post',

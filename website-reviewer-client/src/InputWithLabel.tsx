@@ -1,18 +1,22 @@
-export default function InputWithLabel(
+export default function InputWithLabel<T>(
   {
     label,
     name,
     placeholder,
+    type,
     value,
     setValue,
+    disabled,
   }
   :
   {
     label: string,
     name: string,
+    type: string,
     placeholder?: string,
-    value: string,
-    setValue: (value: string) => void,
+    value: T,
+    setValue: (value: T) => void,
+    disabled?: boolean,
   }
 ) {
 
@@ -20,12 +24,14 @@ export default function InputWithLabel(
     <div className='flex flex-col'>
       <label htmlFor={name}>{label}</label>
       <input
-        value={value}
+        disabled={disabled !== undefined ? disabled : false}
+        type={type}
+        value={value as string}
         placeholder={placeholder}
         name={name}
         id={name}
         className='bg-white border border-gray-500' 
-        onChange={ e => setValue(e.currentTarget.value) }
+        onChange={ e => setValue(e.currentTarget.value as T) }
       />
     </div>
   )

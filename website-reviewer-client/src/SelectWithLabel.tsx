@@ -1,5 +1,6 @@
 export default function selectWithLabel(
   {
+    defaultText,
     label,
     name,
     selections,
@@ -8,6 +9,7 @@ export default function selectWithLabel(
   }
   :
   {
+    defaultText?: string,
     label: string,
     name: string,
     selections: {value: string, text: string}[],
@@ -29,7 +31,7 @@ export default function selectWithLabel(
         value={selected}     
         onChange={ e => setSelected(e.currentTarget.value) }
       >
-        <option value={'default'} disabled hidden>- select review -</option>
+        <option value={'default'} disabled hidden>{defaultText}</option>
         { selectionsHTML }
       </select>
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { captureSnapshot, getReviews, saveReview } from './Api';
+import { captureSnapshot, createReview, getReviews } from './Api';
 import Button from './Button';
 import { useAsync } from './CustomHooks';
 import ErrorIndicator from './ErrorIndicator';
@@ -8,11 +8,12 @@ import LoadingIndicator from './LoadingIndicator';
 import SelectWithLabel from './SelectWithLabel';
 import SnapshotMask from './SnapshotMask';
 import * as T from './types';
+import Modal from 'react-modal';
 
 function App() {
 
   // snapshot parameters
-  const [websiteUrl, setWebsiteUrl] = useState('https://tailwindcss.com/docs/installation');
+  const [websiteUrl, setWebsiteUrl] = useState('https://www.google.com/');
   const [viewportWidth, setViewportWidth] = useState(1440);
   const [viewportHeight, setViewportHeight] = useState(900);
   const [imageUrl, setImageUrl] = useState('');
@@ -25,6 +26,9 @@ function App() {
   const [currentReviewId, setCurrentReviewId] = useState<T.id >('default');
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
+
+  // modal control
+  const [modalIsOpen, setIsOpen] = useState(false);
   
 
   const reviewHeadersAsync = useAsync(getReviews, []);
@@ -42,19 +46,31 @@ function App() {
     return {value: reviewHeader.id, text: reviewHeader.name} 
   })
 
-  const handleCaptureClick = async () => {
+  const handleNewReviewClick = () => {
+    setIsOpen(true);
+  }
+
+  const handleTryCreateReview = async () => {
     setIsLoading(true);
     setHasError(false);
 
-    const params = {
+    const snapShotParams = {
       websiteUrl,
       viewportWidth,
       viewportHeight
     }
 
     try {
-      const imageURL = await captureSnapshot(params);  
+      const imageURL = await captureSnapshot(snapShotParams);  
       setImageUrl(imageURL);
+      const newReviewParams = {
+        name: reviewName,
+        imageUrl,
+        notes,
+      }
+      const newReviewId = await createReview(newReviewParams);  
+      setCurrentReviewId(newReviewId);
+
     } catch(e) {
       console.error(e);
       setHasError(true);
@@ -63,123 +79,70 @@ function App() {
     }
   }
 
-  const handleTrySaveReview = async () => {
-    setIsLoading(true);
-    setHasError(false);
+  // const handleTrySaveReview = async () => {
+  //   setIsLoading(true);
+  //   setHasError(false);
 
-    // [TODO] validation
+  //   // [TODO] validation
 
-    const params = {
-      name: reviewName,
-      imageUrl,
-      notes,
-    }
+  //   const params = {
+  //     name: reviewName,
+  //     imageUrl,
+  //     notes,
+  //   }
 
-    try {
-      const newReviewId = await saveReview(params);  
-    } catch(e) {
-      console.error(e);
-      setHasError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  //   try {
+  //     const newReviewId = await saveReview(params);  
+  //   } catch(e) {
+  //     console.error(e);
+  //     setHasError(true);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }
 
   const handleTryGetReviewDetails = async (id: T.id) => {
 
     setIsLoading(true);
     setHasError(false);
 
-    // [TODO] validation
-
-    const params = {
-      name: reviewName,
-      imageUrl,
-      notes,
-    }
-
-    try {
-      const newReviewId = await saveReview(params);  
-    } catch(e) {
-      console.error(e);
-      setHasError(true);
-    } finally {
-      setIsLoading(false);
-    }
-
-    setCurrentReviewId(id);
   }
 
   return (
     <div className="h-full flex flex-col">
-      <div className='flex'>
-        <div className='p-5 max-w-[45%]'>
-          <div className='flex flex-col pb-3'>
-            <label htmlFor='website-url'>Enter the URL:</label>
-            <input
-              placeholder='eg. https://www.google.com/'
-              name='website-url' 
-              id='website-url' 
-              className='bg-white border border-gray-500' 
-              onChange={ e => setWebsiteUrl(e.currentTarget.value) }
-            />
-          </div>
-          <div className='flex justify-between X'>
-            <div className='flex flex-col max-w-[45%]'>
-              <label htmlFor='viewport-width'>Viewport width:</label>
-              <input
-                type='number'
-                name='viewport-width' 
-                id='viewport-width' 
-                className='bg-white border border-gray-500' 
-                onChange={ e => setViewportWidth(+e.currentTarget.value)}
-              />
-            </div>
-            <div className='flex flex-col max-w-[45%]'>
-              <label htmlFor='viewport-width'>Viewport height:</label>
-              <input
-                type='number'
-                name='viewport-height' 
-                id='viewport-height' 
-                className='bg-white border border-gray-500' 
-                onChange={ e => setViewportHeight(+e.currentTarget.value)}
-              />
-            </div>
-          </div>
-          <Button 
-            actionType='primary'
-            actionText='Capture Snapshot'
-            actionHandler={ handleCaptureClick }
-          />
-          <p># Left ctrl + click anywhere to create a note.</p>
-        </div>
-        <div className='p-5 max-w-[45%]'>
-          <SelectWithLabel 
-            label='Select a Review File'
-            name='review-select'
-            selected={currentReviewId}
-            selections={reviewSelections}
-            setSelected={ handleTryGetReviewDetails }
-          />
-          <InputWithLabel 
-            label='Review Name'
-            name='review-name'
-            placeholder='eg. new project'
-            value={reviewName}
-            setValue={ setReviewName }
-          />
-          <Button 
-            actionType='primary'
-            actionText='Save Review'
-            actionHandler={ handleTrySaveReview }
-          />
-        </div>
+      <div className='p-5 flex justify-between'>
+        <SelectWithLabel 
+          defaultText='- select -'
+          label='Select Exisiting Review'
+          name='review-select'
+          selected={currentReviewId}
+          selections={reviewSelections}
+          setSelected={ handleTryGetReviewDetails }
+        />
+        <InputWithLabel 
+          type='text'
+          label='Review Name'
+          name='review-name'
+          value={reviewName}
+          disabled={currentReviewId === 'default'}
+          setValue={ setReviewName }
+        />
+      </div>
+      <div className='p-5 flex justify-between'>
+        <Button 
+          actionType='primary'
+          actionText='New Review'
+          actionHandler={ handleNewReviewClick }
+        />
+        {/* <Button 
+          actionType='primary'
+          actionText='Save Review'
+          actionHandler={ handleTrySaveReview }
+        /> */}
       </div>
       {
-        imageUrl === ""
-        ?
-        <p>Render a snapshot of your target website by pressing the "Capture Snapshot" button</p>
-        :
+        imageUrl !== ""
+        &&
         <div className='flex relative max-w-fit'>
           <img 
             src={imageUrl}
@@ -192,10 +155,64 @@ function App() {
         </div>
       }
       { isLoading && <LoadingIndicator /> }
-      { hasError && <ErrorIndicator /> }
-      
+      { hasError && <ErrorIndicator /> }     
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setIsOpen(false)}
+        contentLabel="New Review"
+        appElement={document.getElementById('root') || undefined}
+      >
+        <div className='p-5'>
+          <Button 
+            actionType='secondary'
+            actionText='close'
+            actionHandler={ () => setIsOpen(false) }
+          />
+        </div>
+        <div className='p-5'>
+          <InputWithLabel 
+            type='text'
+            label='Enter New Review Name'
+            name='new-review-name'
+            value={reviewName}
+            setValue={ setReviewName }
+          />
+          <InputWithLabel 
+            type='text'
+            label='Enter Target Website URL:'
+            name='website-url'
+            placeholder='eg. https://www.google.com/'
+            value={websiteUrl}
+            setValue={ v => setWebsiteUrl(v) }
+          />
+          <div className='flex justify-between X'>
+            <InputWithLabel 
+              type='number'
+              label='Viewport Width:'
+              name='viewport-width'
+              placeholder='eg. 1440'
+              value={viewportWidth}
+              setValue={ v => setViewportWidth(v) }
+            />
+            <InputWithLabel 
+              type='number'
+              label='Viewport Height:'
+              name='viewport-height'
+              placeholder='eg. 990'
+              value={viewportHeight}
+              setValue={ v => setViewportHeight(v) }
+            />
+          </div>
+          <Button 
+            actionType='primary'
+            actionText='Create Review'
+            actionHandler={ handleTryCreateReview }
+          />
+        </div>
+      </Modal>
     </div>
   );
 }
 
 export default App;
+
