@@ -139,6 +139,7 @@ app.delete('/api/reviews/:reviewId', async (req, res) => {
   const reviewId = req.params.reviewId;
   database.reviews = database.reviews.filter( review => review.id !== reviewId);
 
+  console.log(database);
   await writeDatabase(database);
   // No content response
   res.status(204).send();

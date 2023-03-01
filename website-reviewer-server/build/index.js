@@ -124,6 +124,7 @@ app.delete('/api/reviews/:reviewId', (req, res) => __awaiter(void 0, void 0, voi
     const database = yield (0, database_1.readDatabase)();
     const reviewId = req.params.reviewId;
     database.reviews = database.reviews.filter(review => review.id !== reviewId);
+    console.log(database);
     yield (0, database_1.writeDatabase)(database);
     // No content response
     res.status(204).send();

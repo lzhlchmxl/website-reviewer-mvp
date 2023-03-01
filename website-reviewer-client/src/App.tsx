@@ -77,6 +77,7 @@ function App() {
         notes: [],
       }
       const newReviewId = await createReview(newReviewParams);
+      setNotes([]);
       setCurrentReviewId(newReviewId);
       /* [TODO] should've separated the detail view from list view */
       tryUpdateListView();
@@ -186,16 +187,24 @@ function App() {
             actionText='New Review'
             actionHandler={ handleNewReviewClick }
           />
-          <Button 
-            actionType='secondary'
-            actionText='Save Review'
-            actionHandler={ handleTrySaveReview }
-          />
-          <Button 
-            actionType='danger'
-            actionText='Delete Review'
-            actionHandler={ handleTryDeleteReview }
-          />
+          {
+            currentReviewId !== "default"
+            &&
+            <Button 
+              actionType='secondary'
+              actionText='Save Review'
+              actionHandler={ handleTrySaveReview }
+            />
+          }
+          {
+            currentReviewId !== "default"
+            &&
+            <Button 
+              actionType='danger'
+              actionText='Delete Review'
+              actionHandler={ handleTryDeleteReview }
+            />
+          }
         </div>
       </div>
       {
