@@ -72,8 +72,19 @@ export async function saveReview(params: T.Review): Promise<T.ReviewId> {
   if (response.status !== 200) {
     throw new Error("/api/review/save returned HTTP status code: " + response.status);
   }
-  
+
   return response.text();
+}
+
+export async function deleteReviewById(id: T.ReviewId): Promise<number> {
+
+  const response = await fetch(`/api/reviews/${id}`, {method: 'delete'});
+
+  if (response.status !== 204) {
+    throw new Error(`/api/reviews/${id} returned HTTP status code: ${response.status}`);
+  }
+  
+  return response.status;
 }
 
 // curl -X POST -H 'Content-Type: application/json' -d '{}' http://localhost:4000/api/capture-snapshot

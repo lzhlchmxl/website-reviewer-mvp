@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { captureSnapshot, createReview, getReviewDetails, getReviews, saveReview } from './Api';
+import { captureSnapshot, createReview, deleteReviewById, getReviewDetails, getReviews, saveReview } from './Api';
 import Button from './Button';
-import { useAsync } from './CustomHooks';
 import ErrorIndicator from './ErrorIndicator';
 import InputWithLabel from './InputWithLabel';
 import LoadingIndicator from './LoadingIndicator';
@@ -134,6 +133,30 @@ function App() {
     }
   }
 
+  const handleTryDeleteReview = async () => {
+
+    setIsLoading(true);
+    setHasError(false);
+
+    try {
+      await deleteReviewById(currentReviewId);
+      tryUpdateListView();
+      resetStates();
+    } catch(e) {
+      console.error(e);
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const resetStates = () => {
+    setCurrentReviewId('default');
+    setImageUrl('');
+    setReviewName('');
+    setNewReviewName('');
+  }
+
   return (
     <div className="h-full flex flex-col">
       <div className='p-5 flex justify-between'>
@@ -164,6 +187,11 @@ function App() {
           actionType='primary'
           actionText='Save Review'
           actionHandler={ handleTrySaveReview }
+        />
+        <Button 
+          actionType='primary'
+          actionText='Delete Review'
+          actionHandler={ handleTryDeleteReview }
         />
       </div>
       {

@@ -114,6 +114,20 @@ app.put('/api/review/save', (req, res) => __awaiter(void 0, void 0, void 0, func
     yield (0, database_1.writeDatabase)(database);
     res.send(id);
 }));
+/*
+  DELETE /api/reviews/:reviewId
+  Description: delete an existing review from database
+  Request body: no request body
+  Response body: T.ReviewId
+*/
+app.delete('/api/reviews/:reviewId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const database = yield (0, database_1.readDatabase)();
+    const reviewId = req.params.reviewId;
+    database.reviews = database.reviews.filter(review => review.id !== reviewId);
+    yield (0, database_1.writeDatabase)(database);
+    // No content response
+    res.status(204).send();
+}));
 // Serve index.html to all other routes
 app.get('/*', (_req, res) => {
     res.sendFile(node_path_1.default.join(process.cwd(), '..', 'website-reviewer-client', 'build', 'index.html'));

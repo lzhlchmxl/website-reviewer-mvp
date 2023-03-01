@@ -13,18 +13,6 @@
 			"imageUrl": "http://127.0.0.1:4000/screenshot-1677699673109.png"
 		},
 		{
-			"id": "mpikty1u7eaet8rd0t2y",
-			"name": "review 3",
-			"notes": [],
-			"imageUrl": "http://127.0.0.1:4000/screenshot-1677700020493.png"
-		},
-		{
-			"id": "v1jurg4xfuej00h79tv8",
-			"name": "review 4",
-			"notes": [],
-			"imageUrl": "http://127.0.0.1:4000/screenshot-1677700214267.png"
-		},
-		{
 			"id": "9gqfvtud9mvq4wtx14u5",
 			"name": "review 5.2",
 			"notes": [
@@ -37,8 +25,8 @@
 				},
 				{
 					"id": "leq3zd95",
-					"text": "haha",
-					"isActive": true,
+					"text": "ha",
+					"isActive": false,
 					"x": 351,
 					"y": 53
 				}

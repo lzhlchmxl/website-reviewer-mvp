@@ -128,6 +128,22 @@ app.put('/api/review/save', async (req, res) => {
   res.send(id);
 })
 
+/*
+  DELETE /api/reviews/:reviewId
+  Description: delete an existing review from database
+  Request body: no request body
+  Response body: T.ReviewId
+*/
+app.delete('/api/reviews/:reviewId', async (req, res) => {
+  const database = await readDatabase();
+  const reviewId = req.params.reviewId;
+  database.reviews = database.reviews.filter( review => review.id !== reviewId);
+
+  await writeDatabase(database);
+  // No content response
+  res.status(204).send();
+})
+
 
 // Serve index.html to all other routes
 app.get('/*', (_req, res) => {
