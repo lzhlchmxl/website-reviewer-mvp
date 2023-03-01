@@ -1,19 +1,31 @@
 import * as T from './types';
 
-export async function getReviews(): Promise<T.review[]> {
+export async function getReviews(): Promise<T.Review[]> {
   const response = await fetch('/api/review-list');
   
   if (response.status !== 200) {
     throw new Error("/api/review-list returned HTTP status code: " + response.status);
   }
 
-  const reviewHeaders: T.review[] = await response.json();
+  const reviewHeaders: T.Review[] = await response.json();
 
   return reviewHeaders;
 
 }
 
-export async function captureSnapshot(params: T.snapshotParams): Promise<string> {
+export async function getReviewDetails(id: T.ReviewId): Promise<T.Review> {
+  const response = await fetch(`/api/review-list/${id}`);
+
+  if (response.status !== 200) {
+    throw new Error(`/api/review-list/:${id} returned HTTP status code: ${response.status}`);
+  }
+
+  const reviewDetails: T.Review = await response.json();
+
+  return reviewDetails;
+}
+
+export async function captureSnapshot(params: T.SnapshotParams): Promise<string> {
 
   const requestOptions = {
     method: 'post',
@@ -30,7 +42,7 @@ export async function captureSnapshot(params: T.snapshotParams): Promise<string>
   return response.text();
 }
 
-export async function createReview(params: T.newReview): Promise<T.id> {
+export async function createReview(params: T.NewReview): Promise<T.ReviewId> {
   
   const requestOptions = {
     method: 'post',

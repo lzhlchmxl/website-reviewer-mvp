@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { captureSnapshot, createReview, getReviews } from './Api';
+import { captureSnapshot, createReview, getReviewDetails, getReviews } from './Api';
 import Button from './Button';
 import { useAsync } from './CustomHooks';
 import ErrorIndicator from './ErrorIndicator';
@@ -9,6 +9,7 @@ import SelectWithLabel from './SelectWithLabel';
 import SnapshotMask from './SnapshotMask';
 import * as T from './types';
 import Modal from 'react-modal';
+import _ from 'lodash';
 
 function App() {
 
@@ -20,31 +21,37 @@ function App() {
 
   // review parameters
   const [reviewName, setReviewName] = useState('');
-  const [notes, setNotes] = useState<T.note[]>([]);
+  const [notes, setNotes] = useState<T.Note[]>([]);
   
 
-  const [currentReviewId, setCurrentReviewId] = useState<T.id >('default');
+  const [currentReviewId, setCurrentReviewId] = useState<T.ReviewId >('default');
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
   // modal control
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [newReviewName, setNewReviewName] = useState('');
   
+  // [TODO] This is not a good pattern, should've looked for a solution with routing
+  const [reviewSelections, setReviewSelections] = useState<{value: string; text: string;}[]>([]);
+  const tryUpdateListView = async () => {
+    try {
+      const reviewHeaders = await getReviews(); 
+      const updatedReviewSelections = reviewHeaders.map( reviewHeader => {
+        return {value: reviewHeader.id, text: reviewHeader.name} 
+      })
 
-  const reviewHeadersAsync = useAsync(getReviews, []);
-
-  if ( reviewHeadersAsync.status === "pending") {
-    return <LoadingIndicator />
+      if ( !_.isEqual(updatedReviewSelections, reviewSelections)) {
+        setReviewSelections(updatedReviewSelections);
+      }
+    } catch(e) {
+      console.error(e);
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
   }
-
-  if (reviewHeadersAsync.status === "rejected") {
-    return <ErrorIndicator />
-  }
-
-  const reviewHeaders = reviewHeadersAsync.value;
-  const reviewSelections = reviewHeaders.map( reviewHeader => {
-    return {value: reviewHeader.id, text: reviewHeader.name} 
-  })
+  tryUpdateListView();
 
   const handleNewReviewClick = () => {
     setIsOpen(true);
@@ -61,23 +68,28 @@ function App() {
     }
 
     try {
-      const imageURL = await captureSnapshot(snapShotParams);  
-      setImageUrl(imageURL);
+      const imageUrl = await captureSnapshot(snapShotParams);  
+      setImageUrl(imageUrl);
       const newReviewParams = {
-        name: reviewName,
+        name: newReviewName,
         imageUrl,
-        notes,
+        notes: [],
       }
-      const newReviewId = await createReview(newReviewParams);  
+      const newReviewId = await createReview(newReviewParams);
       setCurrentReviewId(newReviewId);
+      /* [TODO] should've separated the detail view from list view */
+      tryUpdateListView();
 
     } catch(e) {
       console.error(e);
       setHasError(true);
     } finally {
+      setReviewName(newReviewName);
+      setIsOpen(false);
       setIsLoading(false);
     }
   }
+
 
   // const handleTrySaveReview = async () => {
   //   setIsLoading(true);
@@ -101,11 +113,24 @@ function App() {
   //   }
   // }
 
-  const handleTryGetReviewDetails = async (id: T.id) => {
+  const handleTryGetReviewDetails = async (id: T.ReviewId) => {
 
     setIsLoading(true);
     setHasError(false);
 
+    try {
+      const reviewDetails = await getReviewDetails(id);
+      const { notes, imageUrl, name } = reviewDetails;
+      setNotes(notes);
+      setImageUrl(imageUrl);
+      setReviewName(name);
+      setCurrentReviewId(id);
+    } catch(e) {
+      console.error(e);
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -174,8 +199,8 @@ function App() {
             type='text'
             label='Enter New Review Name'
             name='new-review-name'
-            value={reviewName}
-            setValue={ setReviewName }
+            value={newReviewName}
+            setValue={ setNewReviewName }
           />
           <InputWithLabel 
             type='text'

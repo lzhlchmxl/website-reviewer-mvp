@@ -1,26 +1,26 @@
-export type snapshotParams = {
+export type SnapshotParams = {
   websiteUrl: string,
   viewportWidth: number,
   viewportHeight: number,
 }
 
-export type Database = { reviews: review[] }
-export type review = {
+export type Database = { reviews: Review[] }
+export type Review = {
   id: string,
-} & newReview;
+} & NewReview;
 
-export type newReview = {
+export type NewReview = {
   name: string,
-  notes: note[],
+  notes: Note[],
   imageUrl: string,
 }
 
-export type reviewHeader = {
+export type ReviewHeader = {
   id: string,
   name: string,
 }
 
-export type note = {
+export type Note = {
   id: string,
   text: string,
   isActive: boolean,

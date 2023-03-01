@@ -1,11 +1,11 @@
-export type snapshotParams = {
+export type SnapshotParams = {
   websiteUrl: string,
   viewportWidth?: number,
   viewportHeight?: number,
   imageWidth?: number,
 }
 
-export type newNote = {
+export type NewNote = {
   id: string,
   text: null,
   isActive: boolean,
@@ -13,7 +13,7 @@ export type newNote = {
   y: number,
 }
 
-export type note = {
+export type Note = {
   id: string,
   text: string | null,
   isActive: boolean,
@@ -21,18 +21,18 @@ export type note = {
   y: number,
 }
 
-export type id = string
+export type ReviewId = string
 
-export type newReview = {
+export type NewReview = {
   imageUrl: string,
-  notes: note[],
+  notes: Note[],
   name: string,
 }
 
-export type review = {
-  id: id
-} & newReview;
+export type Review = {
+  id: ReviewId
+} & NewReview;
 
-export type snapshotMaskRef = {
-  getNotesState: () => note[]
+export type SnapshotMaskRef = {
+  getNotesState: () => Note[]
 }

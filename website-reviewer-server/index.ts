@@ -19,21 +19,47 @@ app.use(Express.static(Path.join(__dirname, 'public')));
 // Parse JSON requests automatically
 app.use(Express.json());
 
+/*
+  GET /review-list
+  Description: retrieve a list of review headers from server
+  Request body: no request body
+  Response body: ReviewHeader[]
+*/
 app.get('/api/review-list', async (_req, res) => {
 
   const database = await readDatabase();
 
-  const reviewHeaders: T.reviewHeader[] = database.reviews.map( review => {
+  const reviewHeaders: T.ReviewHeader[] = database.reviews.map( review => {
     return { id: review.id, name: review.name }
   })
 
   res.send(reviewHeaders);
 })
 
+/*
+  GET /review-list:reviewId
+  Description: retrieve detailed information on a review with given ID
+  Request body: no request body
+  Response body: ReviewDetail
+*/
+app.get('/api/review-list/:reviewId', async (req, res) => {
+
+  const database = await readDatabase();
+
+  const review = database.reviews.find( review => review.id === req.params.reviewId );
+
+  if (review === undefined) {
+    res.status(204).send();
+    console.log(`No review found with the given ID: ${req.params.reviewId}`);
+  }
+
+  res.send(review);
+})
+
 
 app.post('/api/capture-snapshot', async (req, res) => {
 
-  const { websiteUrl, viewportWidth, viewportHeight }: T.snapshotParams = req.body;
+  const { websiteUrl, viewportWidth, viewportHeight }: T.SnapshotParams = req.body;
 
   const access_key = 'a02aeaf299f062eb982f088fad8d5397';
   const secret_key = md5(`${websiteUrl}8hA6#bbdM|T$VdvwWp]#Fl5SkR.kN`);
@@ -53,7 +79,7 @@ app.post('/api/capture-snapshot', async (req, res) => {
 
 app.post('/api/review/create', async (req, res) => {
   const database = await readDatabase();
-  const {name, notes, imageUrl}: T.newReview = req.body;
+  const {name, notes, imageUrl}: T.NewReview = req.body;
   const id = generateUniqueId();
   const newReview = {
     id,

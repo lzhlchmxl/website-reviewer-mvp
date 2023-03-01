@@ -27,12 +27,33 @@ app.use(express_1.default.static(node_path_1.default.join('..', 'website-reviewe
 app.use(express_1.default.static(node_path_1.default.join(__dirname, 'public')));
 // Parse JSON requests automatically
 app.use(express_1.default.json());
+/*
+  GET /review-list
+  Description: retrieve a list of review headers from server
+  Request body: no request body
+  Response body: ReviewHeader[]
+*/
 app.get('/api/review-list', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const database = yield (0, database_1.readDatabase)();
     const reviewHeaders = database.reviews.map(review => {
         return { id: review.id, name: review.name };
     });
     res.send(reviewHeaders);
+}));
+/*
+  GET /review-list:reviewId
+  Description: retrieve detailed information on a review with given ID
+  Request body: no request body
+  Response body: ReviewDetail
+*/
+app.get('/api/review-list/:reviewId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const database = yield (0, database_1.readDatabase)();
+    const review = database.reviews.find(review => review.id === req.params.reviewId);
+    if (review === undefined) {
+        res.status(204).send();
+        console.log(`No review found with the given ID: ${req.params.reviewId}`);
+    }
+    res.send(review);
 }));
 app.post('/api/capture-snapshot', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { websiteUrl, viewportWidth, viewportHeight } = req.body;

@@ -1,62 +1,34 @@
 {
 	"reviews": [
 		{
-			"id": "0mb5bizakmf86qhkvp3q",
-			"name": "aaaa",
+			"id": "jexfth6nfrx2jan4wwyy",
+			"name": "review 1",
 			"notes": [],
-			"imageUrl": "http://127.0.0.1:4000/screenshot-1677619649065.png"
+			"imageUrl": "http://127.0.0.1:4000/screenshot-1677696589143.png"
 		},
 		{
-			"id": "puv85hmtxg8fxru8v4ka",
-			"name": "aaaafff",
-			"notes": [
-				{
-					"id": "leornp14",
-					"text": "asdasdasd",
-					"isActive": true,
-					"x": 280,
-					"y": 458
-				},
-				{
-					"id": "leornqej",
-					"text": "aaaa",
-					"isActive": true,
-					"x": 308,
-					"y": 234
-				},
-				{
-					"id": "leornrid",
-					"text": "dddd",
-					"isActive": true,
-					"x": 41,
-					"y": 140
-				}
-			],
-			"imageUrl": "http://127.0.0.1:4000/screenshot-1677619649065.png"
+			"id": "q8w0ym189qsctmf5mkw2",
+			"name": "review 2",
+			"notes": [],
+			"imageUrl": "http://127.0.0.1:4000/screenshot-1677699673109.png"
 		},
 		{
-			"id": "w1b4bqclah641aax04g4",
-			"name": "",
+			"id": "mpikty1u7eaet8rd0t2y",
+			"name": "review 3",
 			"notes": [],
-			"imageUrl": ""
+			"imageUrl": "http://127.0.0.1:4000/screenshot-1677700020493.png"
 		},
 		{
-			"id": "5fcmrttl1nn0rkpf3k4g",
-			"name": "",
+			"id": "v1jurg4xfuej00h79tv8",
+			"name": "review 4",
 			"notes": [],
-			"imageUrl": ""
+			"imageUrl": "http://127.0.0.1:4000/screenshot-1677700214267.png"
 		},
 		{
-			"id": "fmen8xl80a6j1hfvo7ay",
-			"name": "",
+			"id": "9gqfvtud9mvq4wtx14u5",
+			"name": "review 5",
 			"notes": [],
-			"imageUrl": ""
-		},
-		{
-			"id": "k0zia9uvvqs02o25wriv",
-			"name": "",
-			"notes": [],
-			"imageUrl": ""
+			"imageUrl": "http://127.0.0.1:4000/screenshot-1677700304206.png"
 		}
 	]
 }

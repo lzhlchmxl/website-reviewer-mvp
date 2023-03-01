@@ -3,7 +3,7 @@ import uniqid from 'uniqid';
 import NotesIndicator from './NotesIndicator';
 import NoteEditor from './NoteEditor';
 
-export default function SnapshotMask({notes, setNotes}: {notes: T.note[], setNotes: (notes: T.note[]) => void}) {
+export default function SnapshotMask({notes, setNotes}: {notes: T.Note[], setNotes: (notes: T.Note[]) => void}) {
 
   
 
@@ -15,7 +15,7 @@ export default function SnapshotMask({notes, setNotes}: {notes: T.note[], setNot
       const x = e.clientX - mask.left;
       const y = e.clientY - mask.top;
 
-      const newNote:T.newNote = {
+      const newNote:T.NewNote = {
         id: uniqid(),
         text: null,
         isActive: true,
@@ -35,7 +35,7 @@ export default function SnapshotMask({notes, setNotes}: {notes: T.note[], setNot
       throw new Error(`Unable to find note with id: ${id}`);
     }
 
-    const newNote: T.note = {
+    const newNote: T.Note = {
       ...note,
       text,
     }
@@ -58,7 +58,7 @@ export default function SnapshotMask({notes, setNotes}: {notes: T.note[], setNot
       throw new Error(`Unable to find note with id: ${id}`);
     }
 
-    const newNote: T.note = {
+    const newNote: T.Note = {
       ...note,
       isActive: !note.isActive,
     }
