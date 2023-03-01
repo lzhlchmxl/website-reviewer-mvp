@@ -26,8 +26,23 @@
 		},
 		{
 			"id": "9gqfvtud9mvq4wtx14u5",
-			"name": "review 5",
-			"notes": [],
+			"name": "review 5.2",
+			"notes": [
+				{
+					"id": "leq3zbsk",
+					"text": "asdasd",
+					"isActive": true,
+					"x": 146,
+					"y": 163
+				},
+				{
+					"id": "leq3zd95",
+					"text": "haha",
+					"isActive": true,
+					"x": 351,
+					"y": 53
+				}
+			],
 			"imageUrl": "http://127.0.0.1:4000/screenshot-1677700304206.png"
 		}
 	]

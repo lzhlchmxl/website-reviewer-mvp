@@ -56,7 +56,12 @@ app.get('/api/review-list/:reviewId', async (req, res) => {
   res.send(review);
 })
 
-
+/*
+  POST /api/capture-snapshot
+  Description: fetch image from screenshotlayer's API and save the image on server
+  Request body: T.SnapshotParams
+  Response body: image blob
+*/
 app.post('/api/capture-snapshot', async (req, res) => {
 
   const { websiteUrl, viewportWidth, viewportHeight }: T.SnapshotParams = req.body;
@@ -77,6 +82,12 @@ app.post('/api/capture-snapshot', async (req, res) => {
 
 });
 
+/*
+  POST /api/review/create
+  Description: create a new review
+  Request body: T.NewReview
+  Response body: T.ReviewId
+*/
 app.post('/api/review/create', async (req, res) => {
   const database = await readDatabase();
   const {name, notes, imageUrl}: T.NewReview = req.body;
@@ -88,6 +99,29 @@ app.post('/api/review/create', async (req, res) => {
     imageUrl
   }
   database.reviews.push(newReview);
+
+  await writeDatabase(database);
+
+  res.send(id);
+})
+
+/*
+  PUT /api/review/save
+  Description: save an existing review
+  Request body: T.Review
+  Response body: T.ReviewId
+*/
+app.put('/api/review/save', async (req, res) => {
+  const database = await readDatabase();
+  const {id, name, notes}: T.Review = req.body;
+  const targetReview = database.reviews.find( review => review.id === id);
+  if (targetReview === undefined) {
+    res.status(204).send();
+    console.log(`No review found with the given ID: ${id}`);
+  } else {
+    targetReview.name = name;
+    targetReview.notes = notes;
+  }
 
   await writeDatabase(database);
 

@@ -59,4 +59,21 @@ export async function createReview(params: T.NewReview): Promise<T.ReviewId> {
   return response.text();
 }
 
+export async function saveReview(params: T.Review): Promise<T.ReviewId> {
+
+  const requestOptions = {
+    method: 'put',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(params),
+  }
+
+  const response = await fetch('/api/review/save', requestOptions);
+
+  if (response.status !== 200) {
+    throw new Error("/api/review/save returned HTTP status code: " + response.status);
+  }
+  
+  return response.text();
+}
+
 // curl -X POST -H 'Content-Type: application/json' -d '{}' http://localhost:4000/api/capture-snapshot

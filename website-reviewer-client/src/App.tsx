@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { captureSnapshot, createReview, getReviewDetails, getReviews } from './Api';
+import { captureSnapshot, createReview, getReviewDetails, getReviews, saveReview } from './Api';
 import Button from './Button';
 import { useAsync } from './CustomHooks';
 import ErrorIndicator from './ErrorIndicator';
@@ -91,27 +91,28 @@ function App() {
   }
 
 
-  // const handleTrySaveReview = async () => {
-  //   setIsLoading(true);
-  //   setHasError(false);
+  const handleTrySaveReview = async () => {
+    setIsLoading(true);
+    setHasError(false);
 
-  //   // [TODO] validation
+    // [TODO] validation
 
-  //   const params = {
-  //     name: reviewName,
-  //     imageUrl,
-  //     notes,
-  //   }
+    const params = {
+      id: currentReviewId,
+      name: reviewName,
+      imageUrl,
+      notes,
+    }
 
-  //   try {
-  //     const newReviewId = await saveReview(params);  
-  //   } catch(e) {
-  //     console.error(e);
-  //     setHasError(true);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // }
+    try {
+      await saveReview(params);  
+    } catch(e) {
+      console.error(e);
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   const handleTryGetReviewDetails = async (id: T.ReviewId) => {
 
@@ -159,11 +160,11 @@ function App() {
           actionText='New Review'
           actionHandler={ handleNewReviewClick }
         />
-        {/* <Button 
+        <Button 
           actionType='primary'
           actionText='Save Review'
           actionHandler={ handleTrySaveReview }
-        /> */}
+        />
       </div>
       {
         imageUrl !== ""
