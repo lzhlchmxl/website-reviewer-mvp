@@ -113,6 +113,7 @@ function App() {
       setHasError(true);
     } finally {
       setIsLoading(false);
+      window.alert('Review saved');
     }
   }
 
@@ -138,18 +139,22 @@ function App() {
 
   const handleTryDeleteReview = async () => {
 
-    setIsLoading(true);
-    setHasError(false);
+    const confirmed = window.confirm("Are you sure you want to delete this entire review?");
 
-    try {
-      await deleteReviewById(currentReviewId);
-      tryUpdateListView();
-      resetStates();
-    } catch(e) {
-      console.error(e);
-      setHasError(true);
-    } finally {
-      setIsLoading(false);
+    if (confirmed) {
+      setIsLoading(true);
+      setHasError(false);
+
+      try {
+        await deleteReviewById(currentReviewId);
+        tryUpdateListView();
+        resetStates();
+      } catch(e) {
+        console.error(e);
+        setHasError(true);
+      } finally {
+        setIsLoading(false);
+      }
     }
   }
 
