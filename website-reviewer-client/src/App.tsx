@@ -50,6 +50,8 @@ function App() {
       setIsLoading(false);
     }
   }
+
+  /* [TODO] initial review list load, not a good pattern */
   tryUpdateListView();
 
   const handleNewReviewClick = () => {
@@ -158,41 +160,43 @@ function App() {
   }
 
   return (
-    <div className="h-full flex flex-col">
-      <div className='p-5 flex justify-between'>
-        <SelectWithLabel 
-          defaultText='- select -'
-          label='Select Exisiting Review'
-          name='review-select'
-          selected={currentReviewId}
-          selections={reviewSelections}
-          setSelected={ handleTryGetReviewDetails }
-        />
-        <InputWithLabel 
-          type='text'
-          label='Review Name'
-          name='review-name'
-          value={reviewName}
-          disabled={currentReviewId === 'default'}
-          setValue={ setReviewName }
-        />
-      </div>
-      <div className='p-5 flex justify-between'>
-        <Button 
-          actionType='primary'
-          actionText='New Review'
-          actionHandler={ handleNewReviewClick }
-        />
-        <Button 
-          actionType='primary'
-          actionText='Save Review'
-          actionHandler={ handleTrySaveReview }
-        />
-        <Button 
-          actionType='primary'
-          actionText='Delete Review'
-          actionHandler={ handleTryDeleteReview }
-        />
+    <div className="h-full flex flex-col items-center">
+      <div className='flex flex-col w-[500px]'>
+        <div className='p-5 flex justify-between'>
+          <SelectWithLabel 
+            defaultText='- select -'
+            label='Review List'
+            name='review-select'
+            selected={currentReviewId}
+            selections={reviewSelections}
+            setSelected={ handleTryGetReviewDetails }
+          />
+          <InputWithLabel 
+            type='text'
+            label='Review Name'
+            name='review-name'
+            value={reviewName}
+            disabled={currentReviewId === 'default'}
+            setValue={ setReviewName }
+          />
+        </div>
+        <div className='p-5 flex justify-between'>
+          <Button 
+            actionType='primary'
+            actionText='New Review'
+            actionHandler={ handleNewReviewClick }
+          />
+          <Button 
+            actionType='secondary'
+            actionText='Save Review'
+            actionHandler={ handleTrySaveReview }
+          />
+          <Button 
+            actionType='danger'
+            actionText='Delete Review'
+            actionHandler={ handleTryDeleteReview }
+          />
+        </div>
       </div>
       {
         imageUrl !== ""
@@ -211,6 +215,20 @@ function App() {
       { isLoading && <LoadingIndicator /> }
       { hasError && <ErrorIndicator /> }     
       <Modal
+        style={
+          {
+            content: {
+              top: '50%',
+              left: '50%',
+              right: 'auto',
+              bottom: 'auto',
+              marginRight: '-50%',
+              transform: 'translate(-50%, -50%)',
+              width: '500px',
+              height: '500px'
+            }
+          }
+        }
         isOpen={modalIsOpen}
         onRequestClose={() => setIsOpen(false)}
         contentLabel="New Review"

@@ -21,7 +21,7 @@ export default function InputWithLabel<T>(
 ) {
 
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col mb-5'>
       <label htmlFor={name}>{label}</label>
       <input
         disabled={disabled !== undefined ? disabled : false}
